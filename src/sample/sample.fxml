@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane prefHeight="600.0" prefWidth="566.0" />
+      <VBox layoutX="564.0" layoutY="67.0" prefHeight="533.0" prefWidth="336.0" style="-fx-background-color: gainsboro; -fx-border-color: black gainsboro gainsboro gainsboro;">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Scientific name">
+               <VBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </VBox.margin>
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Text>
+            <TextField>
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin>
+            </TextField>
+            <HBox prefHeight="24.0" prefWidth="334.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Start date" textAlignment="CENTER" wrappingWidth="118.8824462890625">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="10.0" top="10.0" />
+                     </HBox.margin>
+                  </Text>
+                  <Text stroke="TRANSPARENT" strokeType="OUTSIDE" strokeWidth="0.0" text="End date" textAlignment="CENTER" wrappingWidth="120.0106201171875">
+                     <HBox.margin>
+                        <Insets left="50.0" top="10.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Text>
+               </children>
+            </HBox>
+            <HBox prefHeight="46.0" prefWidth="334.0">
+               <children>
+                  <DatePicker prefHeight="26.0" prefWidth="120.0">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </DatePicker>
+                  <DatePicker prefHeight="26.0" prefWidth="120.0">
+                     <HBox.margin>
+                        <Insets left="50.0" />
+                     </HBox.margin>
+                  </DatePicker>
+               </children>
+            </HBox>
+            <HBox prefHeight="45.0" prefWidth="334.0" style="-fx-border-color: black gainsboro black gainsboro;">
+               <children>
+                  <RadioButton mnemonicParsing="false" prefHeight="30.0" prefWidth="98.0" text="Move">
+                     <HBox.margin>
+                        <Insets left="10.0" top="5.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </RadioButton>
+                  <RadioButton mnemonicParsing="false" prefHeight="30.0" prefWidth="157.0" text="Selection">
+                     <HBox.margin>
+                        <Insets left="80.0" top="5.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </RadioButton>
+               </children>
+            </HBox>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Specie list" textAlignment="CENTER" wrappingWidth="334.0">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </Text>
+            <ListView prefHeight="138.0" prefWidth="334.0">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </ListView>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Legend" textAlignment="CENTER" wrappingWidth="334.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </Text>
+         </children>
+      </VBox>
+      <TilePane layoutX="565.0" prefHeight="66.0" prefWidth="334.0" style="-fx-background-color: gainsboro;">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Research" textAlignment="CENTER" wrappingWidth="334.0">
+               <font>
+                  <Font name="Arial" size="30.0" />
+               </font>
+               <TilePane.margin>
+                  <Insets top="10.0" />
+               </TilePane.margin>
+            </Text>
+         </children>
+      </TilePane>
+   </children>
+</AnchorPane>
