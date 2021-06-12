@@ -10,59 +10,149 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="OBIS3D" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
+<AnchorPane fx:id="OBIS3D" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
    <children>
-      <Pane prefHeight="600.0" prefWidth="566.0" />
-      <VBox layoutX="564.0" layoutY="67.0" prefHeight="533.0" prefWidth="336.0" style="-fx-background-color: gainsboro; -fx-border-color: black gainsboro gainsboro gainsboro;">
+      <Pane prefHeight="700.0" prefWidth="566.0" />
+      <VBox layoutX="564.0" layoutY="67.0" prefHeight="633.0" prefWidth="434.0" style="-fx-background-color: gainsboro; -fx-border-color: black gainsboro gainsboro gainsboro;">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Scientific name">
-               <VBox.margin>
-                  <Insets left="10.0" top="10.0" />
-               </VBox.margin>
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Text>
-            <TextField fx:id="ScientificName">
-               <VBox.margin>
-                  <Insets left="10.0" right="10.0" />
-               </VBox.margin>
-            </TextField>
-            <HBox prefHeight="24.0" prefWidth="334.0">
+            <HBox prefHeight="80.0" prefWidth="435.0" style="-fx-border-color: black gainsboro black gainsboro;">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Start date" textAlignment="CENTER" wrappingWidth="118.8824462890625">
+                  <VBox prefHeight="100.0" prefWidth="317.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Scientific name">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="10.0" left="10.0" top="10.0" />
+                           </VBox.margin>
+                        </Text>
+                        <TextField fx:id="ScientificName" prefHeight="26.0" prefWidth="295.0">
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </VBox.margin>
+                        </TextField>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="218.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GeoHash Precision">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="10.0" left="10.0" top="10.0" />
+                           </VBox.margin>
+                        </Text>
+                        <TextField>
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </VBox.margin>
+                        </TextField>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox prefHeight="40.0" prefWidth="436.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Start date" textAlignment="CENTER" wrappingWidth="119.68225085735321">
                      <font>
                         <Font size="15.0" />
                      </font>
                      <HBox.margin>
-                        <Insets left="10.0" top="10.0" />
+                        <Insets left="10.0" top="20.0" />
                      </HBox.margin>
                   </Text>
-                  <Text stroke="TRANSPARENT" strokeType="OUTSIDE" strokeWidth="0.0" text="End date" textAlignment="CENTER" wrappingWidth="120.0106201171875">
+                  <Text stroke="TRANSPARENT" strokeType="OUTSIDE" strokeWidth="0.0" text="End date" textAlignment="CENTER" wrappingWidth="119.2104355096817">
                      <HBox.margin>
-                        <Insets left="50.0" top="10.0" />
+                        <Insets left="10.0" top="20.0" />
                      </HBox.margin>
                      <font>
                         <Font size="15.0" />
                      </font>
+                  </Text>
+                  <Text stroke="TRANSPARENT" strokeType="OUTSIDE" strokeWidth="0.0" text="Time span" textAlignment="CENTER" wrappingWidth="68.010498046875">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="10.0" top="20.0" />
+                     </HBox.margin>
+                  </Text>
+                  <Text stroke="TRANSPARENT" strokeType="OUTSIDE" strokeWidth="0.0" text="Number of intervals" textAlignment="CENTER" wrappingWidth="83.21056365966797">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
                   </Text>
                </children>
             </HBox>
             <HBox prefHeight="46.0" prefWidth="334.0">
                <children>
-                  <DatePicker prefHeight="26.0" prefWidth="120.0">
+                  <DatePicker prefHeight="26.0" prefWidth="118.0">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </DatePicker>
-                  <DatePicker prefHeight="26.0" prefWidth="120.0">
+                  <DatePicker prefHeight="26.0" prefWidth="115.0">
                      <HBox.margin>
-                        <Insets left="50.0" />
+                        <Insets left="10.0" />
                      </HBox.margin>
                   </DatePicker>
+                  <TextField prefHeight="26.0" prefWidth="74.0">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <TextField prefHeight="26.0" prefWidth="84.0">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </TextField>
+               </children>
+            </HBox>
+            <HBox prefHeight="94.0" prefWidth="434.0" style="-fx-border-color: black gainsboro black gainsboro;">
+               <children>
+                  <VBox prefHeight="200.0" prefWidth="217.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GPS Coordinates" textAlignment="CENTER" wrappingWidth="194.87085151672363">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </VBox.margin>
+                        </Text>
+                        <TextField>
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </VBox.margin>
+                        </TextField>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="217.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GeoHash" textAlignment="CENTER" wrappingWidth="194.87086486816406">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </VBox.margin>
+                        </Text>
+                        <TextField>
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </VBox.margin>
+                        </TextField>
+                     </children>
+                  </VBox>
                </children>
             </HBox>
             <HBox prefHeight="45.0" prefWidth="334.0" style="-fx-border-color: black gainsboro black gainsboro;">
@@ -85,7 +175,7 @@
                   </RadioButton>
                </children>
             </HBox>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Specie list" textAlignment="CENTER" wrappingWidth="334.0">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Specie list" textAlignment="CENTER" wrappingWidth="434.0">
                <font>
                   <Font size="18.0" />
                </font>
@@ -98,19 +188,136 @@
                   <Insets top="10.0" />
                </VBox.margin>
             </ListView>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Legend" textAlignment="CENTER" wrappingWidth="334.0">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Legend" textAlignment="CENTER" underline="true" wrappingWidth="434.0">
                <font>
-                  <Font size="20.0" />
+                  <Font name="System Bold" size="20.0" />
                </font>
                <VBox.margin>
                   <Insets top="5.0" />
                </VBox.margin>
             </Text>
+            <HBox prefHeight="132.0" prefWidth="183.0">
+               <children>
+                  <VBox prefHeight="200.0" prefWidth="217.0">
+                     <children>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="RED" height="23.0" stroke="BLACK" strokeType="INSIDE" width="44.0">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                              </Rectangle>
+                              <Text fx:id="legend1" strokeType="OUTSIDE" strokeWidth="0.0" text="&gt; 500">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold Italic" size="15.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff6300" height="23.0" stroke="BLACK" strokeType="INSIDE" width="44.0">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                              </Rectangle>
+                              <Text fx:id="legend2" strokeType="OUTSIDE" strokeWidth="0.0" text="&gt; 400">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold Italic" size="15.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#fff300" height="23.0" stroke="BLACK" strokeType="INSIDE" width="44.0">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                              </Rectangle>
+                              <Text fx:id="legend3" strokeType="OUTSIDE" strokeWidth="0.0" text="&gt; 300">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold Italic" size="15.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="129.0" prefWidth="217.0">
+                     <children>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#28c317" height="23.0" stroke="BLACK" strokeType="INSIDE" width="44.0">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                              </Rectangle>
+                              <Text fx:id="legend4" strokeType="OUTSIDE" strokeWidth="0.0" text="&gt; 150">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#00cbff" height="23.0" stroke="BLACK" strokeType="INSIDE" width="44.0">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                              </Rectangle>
+                              <Text fx:id="legend5" strokeType="OUTSIDE" strokeWidth="0.0" text="&gt; 15">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold Italic" size="15.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#001fff" height="23.0" stroke="BLACK" strokeType="INSIDE" width="44.0">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                              </Rectangle>
+                              <Text fx:id="legend6" strokeType="OUTSIDE" strokeWidth="0.0" text="&gt; 0 ">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold Italic" size="15.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </HBox>
+                     </children>
+                     <HBox.margin>
+                        <Insets left="50.0" />
+                     </HBox.margin>
+                  </VBox>
+               </children>
+            </HBox>
          </children>
       </VBox>
-      <TilePane layoutX="565.0" prefHeight="66.0" prefWidth="334.0" style="-fx-background-color: gainsboro;">
+      <TilePane layoutX="565.0" prefHeight="66.0" prefWidth="434.0" style="-fx-background-color: gainsboro;">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Research" textAlignment="CENTER" wrappingWidth="334.0">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="RESEARCH" textAlignment="CENTER" underline="true" wrappingWidth="434.800048828125">
                <font>
                   <Font name="Arial" size="30.0" />
                </font>
