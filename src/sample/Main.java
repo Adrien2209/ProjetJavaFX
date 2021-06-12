@@ -14,36 +14,35 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 
-import static sample.API.readJsonFromUrl;
 
 public class Main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 900, 600));
-        primaryStage.show();
-
-        try (Reader reader = new FileReader("data.json"))
+    public void start(Stage primaryStage) throws Exception
+    {
+        try
         {
-            /*BufferedReader rd = new BufferedReader(reader);
-            String jsonText = readAll(rd);
-            JSONObject jsonRoot = new JSONObject(jsonText);
-            JSONArray resultatRecherche = jsonRoot.getJSONObject("query").getJSONArray("search");
-            JSONObject article = resultatRecherche.getJSONObject(0);
-            System.out.println(article.getString("title"));
-            System.out.println(article.getString("snippet")); */
-            JSONObject jsonRoot = readJsonFromUrl("https://api.obis.org/v3/occurrence/grid/3?scientificname=Delphinidae");
-            JSONObject geometry = jsonRoot.getJSONArray("features").getJSONObject(0).getJSONObject("geometry");
-            JSONObject occurence = jsonRoot.getJSONArray("features").getJSONObject(0).getJSONObject("properties");
-            System.out.println(geometry.getJSONArray("coordinates"));
-            System.out.println(occurence.getInt("n"));
+            //On prépare le fichier FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
+
+            //On charge le fichier FXML, il appellera la méthode *initialize()* de la vue
+            Parent root = loader.load();
+
+            //On crée la scène
+            Scene scene = new Scene(root);
+
+            primaryStage.setTitle("Obis 3D");
+
+            //On définit cette scène comme étant la scène de notre première fenêtre
+            primaryStage.setScene(scene);
+
+            //On rend cette fenêtre visible
+            primaryStage.show();
         }
-        catch (IOException e) {
+        catch(Exception e)
+        {
             e.printStackTrace();
         }
-
 
     }
 
