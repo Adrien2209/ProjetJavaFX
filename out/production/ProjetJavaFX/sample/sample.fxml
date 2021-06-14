@@ -33,7 +33,7 @@
                               <Insets bottom="10.0" left="10.0" top="10.0" />
                            </VBox.margin>
                         </Text>
-                        <TextField fx:id="ScientificName" prefHeight="26.0" prefWidth="295.0">
+                        <TextField fx:id="ScientificName" prefHeight="26.0" prefWidth="295.0" promptText="Ex : Delphinidae">
                            <VBox.margin>
                               <Insets left="10.0" right="10.0" />
                            </VBox.margin>

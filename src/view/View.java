@@ -24,6 +24,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import request.Request;
 import sample.CameraManager;
+import org.controlsfx.control.textfield.TextFields;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
+
 
 import java.io.IOException;
 import java.net.URL;
@@ -102,10 +105,12 @@ public class View implements Initializable {
     @FXML
     private TextArea informations;
 
+
     public View()
     {
         request = new Request();
     }
+
 
     public void handleButtonSearch(ActionEvent actionEvent) throws IOException {
         informations.setText("Informations");
@@ -118,6 +123,9 @@ public class View implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        informations.setEditable(false);
+        //AFFICHAGE DE LA TERRE
+
         //Create a Pane et graph scene root for the 3D content
         Group root3D = new Group();
 
@@ -160,6 +168,13 @@ public class View implements Initializable {
         //Affichage des villes
         displayTown2(root3D,"Brest", 48.447911f,-4.418539f);
         displayTown(root3D,"Paris", 48.86667f,2.33333f);
+
+        //FIN AFFICHAGE DE LA TERRE
+
+
+        //AUTOCOMPLETION
+        String[] possibleWords = {"Delphinidae"};
+        TextFields.bindAutoCompletion(ScientificName,possibleWords);
 
     }
 

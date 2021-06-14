@@ -39,7 +39,7 @@ public class Request {
         int maximum = liste.getJSONObject(0).getJSONObject("properties").getInt("n");
         for (int i=0; i < liste.length(); i++)
         {
-            retour = retour + "\nArea coordinates :";
+            retour = retour + "\n\nArea " + (i+1) + " coordinates :\n";
             int occurence = liste.getJSONObject(i).getJSONObject("properties").getInt("n");
             JSONArray listecoordinate = liste.getJSONObject(i).getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0);
             for (int t=0; t < listecoordinate.length(); t++)
@@ -57,18 +57,12 @@ public class Request {
                 maximum = occurence;
             }
             total = total + occurence;
-            retour = retour + "\nNombre d'occurences = " + occurence;
+            retour = retour + "\n\nNumber of occurrences = " + occurence;
 
         }
-        retour = retour + "\n\nTotal d'occurence = "+total+"\nMinimum = "+minimum+"\nMaximum = "+maximum;
+        retour = retour + "\n\nTotal occurrences = "+total+"\nMinimum = "+minimum+"\nMaximum = "+maximum;
         return retour;
 
-        /*
-        JSONObject geometry = jsonRoot.getJSONArray("features").getJSONObject(0).getJSONObject("geometry");
-        JSONObject occurences = jsonRoot.getJSONArray("features").getJSONObject(0).getJSONObject("properties");
-        System.out.println(geometry.getJSONArray("coordinates"));
-        System.out.println(occurences.getInt("n"));
-        */
     }
 
 
