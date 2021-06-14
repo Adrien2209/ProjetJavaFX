@@ -108,9 +108,11 @@ public class View implements Initializable {
     }
 
     public void handleButtonSearch(ActionEvent actionEvent) throws IOException {
+        informations.setText("Informations");
         String Name = ScientificName.getText();
-        request.GlobalOccurenceScientificName(Name);
-        informations.appendText(request.GlobalOccurenceScientificName(Name));
+        String GeoHashPre = GeoHashPrecision.getText();
+        request.GlobalOccurenceScientificName(Name,GeoHashPre);
+        informations.appendText(request.GlobalOccurenceScientificName(Name,GeoHashPre));
     }
 
     @Override
