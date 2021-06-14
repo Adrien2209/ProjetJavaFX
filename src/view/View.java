@@ -123,6 +123,7 @@ public class View implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        //Set disable
         informations.setEditable(false);
         //AFFICHAGE DE LA TERRE
 
