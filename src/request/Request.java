@@ -8,7 +8,7 @@ import static sample.API.readJsonFromUrl;
 public class Request {
 
 
-    public void GlobalOccurenceScientificName(String scientificname)
+    public String GlobalOccurenceScientificName(String scientificname)
     {
         int total = 0;
 
@@ -29,9 +29,9 @@ public class Request {
             }
             total = total + occurence;
         }
-        System.out.println(total);
-        System.out.println(minimum);
-        System.out.println(maximum);
+        String retour = "\n\nTotal d'occurence = "+total+"\nMinimum = "+minimum+"\nMaximum = "+maximum;
+        return retour;
+
         /*
         JSONObject geometry = jsonRoot.getJSONArray("features").getJSONObject(0).getJSONObject("geometry");
         JSONObject occurences = jsonRoot.getJSONArray("features").getJSONObject(0).getJSONObject("properties");
@@ -40,5 +40,5 @@ public class Request {
         */
     }
 
-    
+
 }

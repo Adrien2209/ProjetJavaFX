@@ -23,18 +23,11 @@ public class Main extends Application {
         try
         {
             //On prépare le fichier FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
-
-            //On charge le fichier FXML, il appellera la méthode *initialize()* de la vue
-            Parent root = loader.load();
-
-            //On crée la scène
-            Scene scene = new Scene(root);
+            Parent content = FXMLLoader.load(getClass().getResource("sample.fxml"));
 
             primaryStage.setTitle("Obis 3D");
 
-            //On définit cette scène comme étant la scène de notre première fenêtre
-            primaryStage.setScene(scene);
+            primaryStage.setScene(new Scene(content));
 
             //On rend cette fenêtre visible
             primaryStage.show();
