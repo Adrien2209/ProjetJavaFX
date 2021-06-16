@@ -67,17 +67,8 @@ public class View implements Initializable {
     @FXML
     private DatePicker EndDate;
 
-    @FXML
-    private TextField TimeSpan;
 
-    @FXML
-    private TextField NumberOfIntervals;
 
-    @FXML
-    private TextField GPSCoordinates;
-
-    @FXML
-    private TextField GeoHash;
 
     @FXML
     private RadioButton Move;
@@ -137,7 +128,7 @@ public class View implements Initializable {
         String GeoHashPre = GeoHashPrecision.getText();
 
         // Request with Scientific Name and GeoHash
-        if(StartDate.getValue() == null && EndDate.getValue() == null && TimeSpan.getText().equals("") && NumberOfIntervals.getText().equals("")){
+        if(StartDate.getValue() == null && EndDate.getValue() == null){
             root3DNew.getChildren().clear();
             AffichageTerre(root3DNew);
             ArrayList<String> resultat = request.GlobalOccurenceScientificName(Name,GeoHashPre, root3DNew);
@@ -148,34 +139,42 @@ public class View implements Initializable {
         // Request with Scientific Name, GeoHash and date
         else if(StartDate.getValue() != null || EndDate.getValue() != null){
             if(StartDate.getValue() == null){
+                root3DNew.getChildren().clear();
+                AffichageTerre(root3DNew);
                 String startdate = "";
                 String enddate = EndDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                informations.appendText(request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate));
+                ArrayList<String> resultat = request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate, root3DNew);
+                informations.appendText(resultat.get(0));
+                Legend(resultat.get(1));
             }
             else if(EndDate.getValue() == null){
+                root3DNew.getChildren().clear();
+                AffichageTerre(root3DNew);
                 String startdate = StartDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 String enddate = "";
-                informations.appendText(request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate));
+                ArrayList<String> resultat = request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate, root3DNew);
+                informations.appendText(resultat.get(0));
+                Legend(resultat.get(1));
             }
             else {
+                root3DNew.getChildren().clear();
+                AffichageTerre(root3DNew);
                 String startdate = StartDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 String enddate = EndDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                //request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate);
-                informations.appendText(request.OccurenceWithDate(Name, GeoHashPre, startdate, enddate));
+                ArrayList<String> resultat = request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate, root3DNew);
+                informations.appendText(resultat.get(0));
+                Legend(resultat.get(1));
             }
         }
     }
 
-
-    /*
-    public void ScientificNameActualization(KeyEvent keyEvent) throws IOException{
-        possibleWords.clear();
-        String lettre = ScientificName.getText();
-        possibleWords = request.AutoCompletion(lettre);
-        TextFields.bindAutoCompletion(ScientificName,possibleWords);
+    public void handleButtonClearStartDate(ActionEvent actionEvent) throws IOException {
+         StartDate.setValue(null);
+    }
+    public void handleButtonClearEndDate(ActionEvent actionEvent) throws IOException {
+        EndDate.setValue(null);
     }
 
-     */
 
     @Override
     public void initialize(URL location, ResourceBundle resources)

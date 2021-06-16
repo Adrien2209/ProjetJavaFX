@@ -1,5 +1,6 @@
 package request;
 
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -50,7 +51,6 @@ public class Request {
         JSONArray liste = jsonRoot.getJSONArray("features");
         int minimum = liste.getJSONObject(0).getJSONObject("properties").getInt("n");
         int maximum = liste.getJSONObject(0).getJSONObject("properties").getInt("n");
-        Color couleur = Color.RED;
 
         //Creation des legendes
         int PasLegende = (maximum/12);
@@ -82,28 +82,7 @@ public class Request {
             retour = retour + "\n\nNumber of occurrences = " + occurence;
 
             //Affichage des resultats sur la planete
-            double gps1 = (GPSZone.get(0)+ GPSZone.get(2))/2.0;
-            double gps2 = (GPSZone.get(1)+ GPSZone.get(5))/2.0;
-            double taille = occurence*0.0001;
-            if(occurence > 10*PasLegende){
-                couleur = Color.RED;
-            }
-            else if (occurence > 8*PasLegende){
-                couleur = Color.DARKORANGE;
-            }
-            else if (occurence > 5*PasLegende){
-                couleur = Color.YELLOW;
-            }
-            else if (occurence > 2*PasLegende){
-                couleur = Color.GREEN;
-            }
-            else if (occurence > PasLegende){
-                couleur = Color.CYAN;
-            }
-            else if (occurence > 0){
-                couleur = Color.BLUE;
-            }
-            displaySpecie(parent, scientificname, gps2, gps1, couleur, taille);
+            displaySpecie(parent, scientificname, occurence, PasLegende, GPSZone);
 
         }
         retour = retour + "\n\nTotal occurrences = "+total+"\nMinimum = "+minimum+"\nMaximum = "+maximum;
@@ -126,7 +105,9 @@ public class Request {
         return ListeRetour;
     }
 
-    public String OccurenceWithDate(String scientificname, String geohash, String startdate, String enddate) {
+    public ArrayList<String> OccurenceWithDate(String scientificname, String geohash, String startdate, String enddate, Group parent) {
+
+        ArrayList<String> ListRetour = new ArrayList<String>();
         scientificname = scientificname.replaceAll(" ", "%20");
         int total = 0;
         String retour = "";
@@ -143,21 +124,32 @@ public class Request {
             }
             String retourscientificname = scientificname.replaceAll("%20", " ");
             retour = retour + "\nTotal number of " + retourscientificname + " recorded on Earth = " + total;
-            return retour;
+            ListRetour.add(retour);
+            ListRetour.add(String.valueOf(total));
+            return ListRetour;
         }
 
         else if (startdate.equals("")) {
-            JSONObject jsonRoot = readJsonFromUrl("https://api.obis.org/v3/occurrence/grid/1?scientificname=" + scientificname + "&enddate=" + enddate);
+            JSONObject jsonRoot = readJsonFromUrl("https://api.obis.org/v3/occurrence/grid/" + geohash +"?scientificname=" + scientificname + "&enddate=" + enddate);
             JSONArray liste = jsonRoot.getJSONArray("features");
             int minimum = liste.getJSONObject(0).getJSONObject("properties").getInt("n");
             int maximum = liste.getJSONObject(0).getJSONObject("properties").getInt("n");
+
+            //Creation des legendes
+            int PasLegende = (maximum/12);
+
             for (int i = 0; i < liste.length(); i++) {
+
+                ArrayList<Double> GPSZone = new ArrayList<Double>();
                 retour = retour + "\n\nArea " + (i + 1) + " coordinates :\n";
                 int occurence = liste.getJSONObject(i).getJSONObject("properties").getInt("n");
                 JSONArray listecoordinate = liste.getJSONObject(i).getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0);
                 for (int t = 0; t < listecoordinate.length(); t++) {
                     String GPS1 = String.valueOf(listecoordinate.getJSONArray(t).getDouble(0));
                     String GPS2 = String.valueOf(listecoordinate.getJSONArray(t).getDouble(1));
+                    //Ajout des coordonnés GPS dans une liste pour déterminer le centre de la zone
+                    GPSZone.add(listecoordinate.getJSONArray(t).getDouble(0));
+                    GPSZone.add(listecoordinate.getJSONArray(t).getDouble(1));
                     retour = retour + "\n[" + GPS1 + "," + GPS2 + "]";
                 }
                 if (occurence < minimum) {
@@ -168,29 +160,42 @@ public class Request {
                 }
                 total = total + occurence;
                 retour = retour + "\n\nNumber of occurrences = " + occurence;
+                //Affichage des resultats sur la planete
+                displaySpecie(parent, scientificname, occurence, PasLegende, GPSZone);
 
             }
             retour = retour + "\n\nTotal occurrences = " + total + "\nMinimum = " + minimum + "\nMaximum = " + maximum;
-            return retour;
+            ListRetour.add(retour);
+            ListRetour.add(String.valueOf(maximum));
+            return ListRetour;
 
         }
         else if (enddate.equals("")) {
-            JSONObject jsonRoot = readJsonFromUrl("https://api.obis.org/v3/occurrence/grid/1?scientificname=" + scientificname + "&startdate=" + startdate);
+            JSONObject jsonRoot = readJsonFromUrl("https://api.obis.org/v3/occurrence/grid/" + geohash +"?scientificname=" + scientificname + "&startdate=" + startdate);
             if ((jsonRoot.getJSONArray("features").isEmpty())) {
                 retour = retour + "\n\nEspece non trouvée ";
-                return retour;
+                ListRetour.add(retour);
+                ListRetour.add(String.valueOf(total));
+                return ListRetour;
             }
             else {
                 JSONArray liste = jsonRoot.getJSONArray("features");
                 int minimum = liste.getJSONObject(0).getJSONObject("properties").getInt("n");
                 int maximum = liste.getJSONObject(0).getJSONObject("properties").getInt("n");
+                //Creation des legendes
+                int PasLegende = (maximum/12);
                 for (int i = 0; i < liste.length(); i++) {
+
+                    ArrayList<Double> GPSZone = new ArrayList<Double>();
                     retour = retour + "\n\nArea " + (i + 1) + " coordinates :\n";
                     int occurence = liste.getJSONObject(i).getJSONObject("properties").getInt("n");
                     JSONArray listecoordinate = liste.getJSONObject(i).getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0);
                     for (int t = 0; t < listecoordinate.length(); t++) {
                         String GPS1 = String.valueOf(listecoordinate.getJSONArray(t).getDouble(0));
                         String GPS2 = String.valueOf(listecoordinate.getJSONArray(t).getDouble(1));
+                        //Ajout des coordonnés GPS dans une liste pour déterminer le centre de la zone
+                        GPSZone.add(listecoordinate.getJSONArray(t).getDouble(0));
+                        GPSZone.add(listecoordinate.getJSONArray(t).getDouble(1));
                         retour = retour + "\n[" + GPS1 + "," + GPS2 + "]";
                     }
                     if (occurence < minimum) {
@@ -201,30 +206,43 @@ public class Request {
                     }
                     total = total + occurence;
                     retour = retour + "\n\nNumber of occurrences = " + occurence;
+                    //Affichage des resultats sur la planete
+                    displaySpecie(parent, scientificname, occurence, PasLegende, GPSZone);
 
                 }
                 retour = retour + "\n\nTotal occurrences = " + total + "\nMinimum = " + minimum + "\nMaximum = " + maximum;
-                return retour;
+                ListRetour.add(retour);
+                ListRetour.add(String.valueOf(maximum));
+                return ListRetour;
             }
         }
 
         JSONObject jsonRoot = readJsonFromUrl("https://api.obis.org/v3/occurrence/grid/" + geohash + "?scientificname=" + scientificname + "&startdate=" + startdate + "&enddate=" + enddate);
         if (jsonRoot.getJSONArray("features").isEmpty()) {
             retour = retour + "\n\nEspece non trouvée ";
-            return retour;
+            ListRetour.add(retour);
+            ListRetour.add(String.valueOf(total));
+            return ListRetour;
         }
 
         else {
             JSONArray liste = jsonRoot.getJSONArray("features");
             int minimum = liste.getJSONObject(0).getJSONObject("properties").getInt("n");
             int maximum = liste.getJSONObject(0).getJSONObject("properties").getInt("n");
+            //Creation des legendes
+            int PasLegende = (maximum/12);
             for (int i = 0; i < liste.length(); i++) {
+
+                ArrayList<Double> GPSZone = new ArrayList<Double>();
                 retour = retour + "\n\nArea " + (i + 1) + " coordinates :\n";
                 int occurence = liste.getJSONObject(i).getJSONObject("properties").getInt("n");
                 JSONArray listecoordinate = liste.getJSONObject(i).getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0);
                 for (int t = 0; t < listecoordinate.length(); t++) {
                     String GPS1 = String.valueOf(listecoordinate.getJSONArray(t).getDouble(0));
                     String GPS2 = String.valueOf(listecoordinate.getJSONArray(t).getDouble(1));
+                    //Ajout des coordonnés GPS dans une liste pour déterminer le centre de la zone
+                    GPSZone.add(listecoordinate.getJSONArray(t).getDouble(0));
+                    GPSZone.add(listecoordinate.getJSONArray(t).getDouble(1));
                     retour = retour + "\n[" + GPS1 + "," + GPS2 + "]";
                 }
                 if (occurence < minimum) {
@@ -235,16 +253,44 @@ public class Request {
                 }
                 total = total + occurence;
                 retour = retour + "\n\nNumber of occurrences = " + occurence;
+                //Affichage des resultats sur la planete
+                displaySpecie(parent, scientificname, occurence, PasLegende, GPSZone);
 
             }
             retour = retour + "\n\nTotal occurrences = " + total + "\nMinimum = " + minimum + "\nMaximum = " + maximum;
-            return retour;
+            ListRetour.add(retour);
+            ListRetour.add(String.valueOf(maximum));
+            return ListRetour;
         }
 
     }
 
-    public void displaySpecie(Group parent, String name, double latitude, double longitude, Color color, double taille)
+    public void displaySpecie(Group parent, String name, int occurence, int PasLegende, ArrayList<Double> GPSZone)
     {
+
+        Color color = Color.RED;
+        double longitude = (GPSZone.get(0)+ GPSZone.get(2))/2.0;
+        double latitude = (GPSZone.get(1)+ GPSZone.get(5))/2.0;
+        double taille = occurence*0.0001;
+        if(occurence > 10*PasLegende){
+            color = Color.RED;
+        }
+        else if (occurence > 8*PasLegende){
+            color = Color.DARKORANGE;
+        }
+        else if (occurence > 5*PasLegende){
+            color = Color.YELLOW;
+        }
+        else if (occurence > 2*PasLegende){
+            color = Color.GREEN;
+        }
+        else if (occurence > PasLegende){
+            color = Color.CYAN;
+        }
+        else if (occurence > 0){
+            color = Color.BLUE;
+        }
+
         Point3D from = geoCoordTo3dCoord(latitude, longitude);
         Box box = new Box(0.005,0.005,taille);
         parent.setId(name);
@@ -274,9 +320,5 @@ public class Request {
                 xVec.getY(), yVec.getY(), zVec.getY(), from.getY(),
                 xVec.getZ(), yVec.getZ(), zVec.getZ(), from.getZ());
     }
-
-    public int Maximum(int maximum){
-        return maximum;
-    }
-
+    
 }
