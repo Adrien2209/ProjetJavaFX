@@ -1,5 +1,12 @@
 package request;
 
+import javafx.geometry.Point3D;
+import javafx.scene.Group;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Box;
+import javafx.scene.text.Text;
+import javafx.scene.transform.Affine;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -8,12 +15,13 @@ import java.util.List;
 
 import static sample.API.readJsonFromUrl;
 import static sample.API.readJsonFromUrlArray;
+import static view.View.geoCoordTo3dCoord;
 
 public class Request {
 
-
-    public String GlobalOccurenceScientificName(String scientificname, String geohash)
+    public ArrayList<String> GlobalOccurenceScientificName(String scientificname, String geohash, Group parent)
     {
+        ArrayList<String> ListRetour = new ArrayList<String>();
         scientificname = scientificname.replaceAll(" ", "%20");
         int total = 0;
         String retour = "";
@@ -33,15 +41,23 @@ public class Request {
             }
             String retourscientificname = scientificname.replaceAll("%20", " ");
             retour = retour + "\nTotal number of " + retourscientificname + " recorded on Earth = " + total;
-            return retour;
+            ListRetour.add(retour);
+            ListRetour.add(String.valueOf(total));
+            return ListRetour;
         }
 
         JSONObject jsonRoot = readJsonFromUrl("https://api.obis.org/v3/occurrence/grid/" + geohash +"?scientificname=" + scientificname);
         JSONArray liste = jsonRoot.getJSONArray("features");
         int minimum = liste.getJSONObject(0).getJSONObject("properties").getInt("n");
         int maximum = liste.getJSONObject(0).getJSONObject("properties").getInt("n");
+        Color couleur = Color.RED;
+
+        //Creation des legendes
+        int PasLegende = (maximum/12);
+
         for (int i=0; i < liste.length(); i++)
         {
+            ArrayList<Double> GPSZone = new ArrayList<Double>();
             retour = retour + "\n\nArea " + (i+1) + " coordinates :\n";
             int occurence = liste.getJSONObject(i).getJSONObject("properties").getInt("n");
             JSONArray listecoordinate = liste.getJSONObject(i).getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0);
@@ -49,6 +65,9 @@ public class Request {
             {
                 String GPS1 = String.valueOf(listecoordinate.getJSONArray(t).getDouble(0));
                 String GPS2 = String.valueOf(listecoordinate.getJSONArray(t).getDouble(1));
+                //Ajout des coordonnés GPS dans une liste pour déterminer le centre de la zone
+                GPSZone.add(listecoordinate.getJSONArray(t).getDouble(0));
+                GPSZone.add(listecoordinate.getJSONArray(t).getDouble(1));
                 retour = retour + "\n[" + GPS1 + "," + GPS2 + "]";
             }
             if (occurence < minimum)
@@ -62,11 +81,39 @@ public class Request {
             total = total + occurence;
             retour = retour + "\n\nNumber of occurrences = " + occurence;
 
+            //Affichage des resultats sur la planete
+            double gps1 = (GPSZone.get(0)+ GPSZone.get(2))/2.0;
+            double gps2 = (GPSZone.get(1)+ GPSZone.get(5))/2.0;
+            double taille = occurence*0.0001;
+            if(occurence > 10*PasLegende){
+                couleur = Color.RED;
+            }
+            else if (occurence > 8*PasLegende){
+                couleur = Color.DARKORANGE;
+            }
+            else if (occurence > 5*PasLegende){
+                couleur = Color.YELLOW;
+            }
+            else if (occurence > 2*PasLegende){
+                couleur = Color.GREEN;
+            }
+            else if (occurence > PasLegende){
+                couleur = Color.CYAN;
+            }
+            else if (occurence > 0){
+                couleur = Color.BLUE;
+            }
+            displaySpecie(parent, scientificname, gps2, gps1, couleur, taille);
+
         }
         retour = retour + "\n\nTotal occurrences = "+total+"\nMinimum = "+minimum+"\nMaximum = "+maximum;
-        return retour;
+        ListRetour.add(retour);
+        ListRetour.add(String.valueOf(maximum));
+        return ListRetour;
 
     }
+
+
 
     public ArrayList<String> AutoCompletion(String letter){
         JSONArray jsonRoot = readJsonFromUrlArray("https://api.obis.org/v3/taxon/complete/verbose/"+letter);
@@ -129,7 +176,7 @@ public class Request {
         }
         else if (enddate.equals("")) {
             JSONObject jsonRoot = readJsonFromUrl("https://api.obis.org/v3/occurrence/grid/1?scientificname=" + scientificname + "&startdate=" + startdate);
-            if (!jsonRoot.isEmpty()) {
+            if ((jsonRoot.getJSONArray("features").isEmpty())) {
                 retour = retour + "\n\nEspece non trouvée ";
                 return retour;
             }
@@ -162,7 +209,7 @@ public class Request {
         }
 
         JSONObject jsonRoot = readJsonFromUrl("https://api.obis.org/v3/occurrence/grid/" + geohash + "?scientificname=" + scientificname + "&startdate=" + startdate + "&enddate=" + enddate);
-        if (!jsonRoot.isEmpty()) {
+        if (jsonRoot.getJSONArray("features").isEmpty()) {
             retour = retour + "\n\nEspece non trouvée ";
             return retour;
         }
@@ -194,6 +241,42 @@ public class Request {
             return retour;
         }
 
+    }
+
+    public void displaySpecie(Group parent, String name, double latitude, double longitude, Color color, double taille)
+    {
+        Point3D from = geoCoordTo3dCoord(latitude, longitude);
+        Box box = new Box(0.005,0.005,taille);
+        parent.setId(name);
+        Point3D to = Point3D.ZERO;
+        Point3D yDir = new Point3D(0, 1, 0);
+
+        // Town Color
+        final PhongMaterial greenMaterial = new PhongMaterial();
+        greenMaterial.setDiffuseColor(color);
+        greenMaterial.setSpecularColor(color);
+        box.setMaterial(greenMaterial);
+
+        Group groupbox = new Group();
+        Affine affine = new Affine();
+        affine.append(lookAt(from,to,yDir));
+        groupbox.getTransforms().setAll(affine);
+        groupbox.getChildren().addAll(box);
+
+        parent.getChildren().addAll(groupbox);
+    }
+
+    public static Affine lookAt(Point3D from, Point3D to, Point3D ydir) {
+        Point3D zVec = to.subtract(from).normalize();
+        Point3D xVec = ydir.normalize().crossProduct(zVec).normalize();
+        Point3D yVec = zVec.crossProduct(xVec).normalize();
+        return new Affine(xVec.getX(), yVec.getX(), zVec.getX(), from.getX(),
+                xVec.getY(), yVec.getY(), zVec.getY(), from.getY(),
+                xVec.getZ(), yVec.getZ(), zVec.getZ(), from.getZ());
+    }
+
+    public int Maximum(int maximum){
+        return maximum;
     }
 
 }
