@@ -2,7 +2,10 @@ package view;
 
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -10,6 +13,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -30,6 +34,8 @@ import org.controlsfx.control.textfield.AutoCompletionBinding;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class View implements Initializable {
@@ -103,6 +109,9 @@ public class View implements Initializable {
     private Text legend6;
 
     @FXML
+    private ComboBox combo;
+
+    @FXML
     private TextArea informations;
 
 
@@ -111,14 +120,51 @@ public class View implements Initializable {
         request = new Request();
     }
 
+    ArrayList<String> possibleWords = new ArrayList<String>();
+
 
     public void handleButtonSearch(ActionEvent actionEvent) throws IOException {
         informations.setText("Informations");
         String Name = ScientificName.getText();
         String GeoHashPre = GeoHashPrecision.getText();
-        request.GlobalOccurenceScientificName(Name,GeoHashPre);
-        informations.appendText(request.GlobalOccurenceScientificName(Name,GeoHashPre));
+
+        // Request with Scientific Name and GeoHash
+        if(StartDate.getValue() == null && EndDate.getValue() == null && TimeSpan.getText().equals("") && NumberOfIntervals.getText().equals("")){
+            request.GlobalOccurenceScientificName(Name,GeoHashPre);
+            informations.appendText(request.GlobalOccurenceScientificName(Name,GeoHashPre));
+        }
+
+        // Request with Scientific Name, GeoHash and date
+        else if(StartDate.getValue() != null || EndDate.getValue() != null){
+            if(StartDate.getValue() == null){
+                String startdate = "";
+                String enddate = EndDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                informations.appendText(request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate));
+            }
+            else if(EndDate.getValue() == null){
+                String startdate = StartDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                String enddate = "";
+                informations.appendText(request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate));
+            }
+            else {
+                String startdate = StartDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                String enddate = EndDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                //request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate);
+                informations.appendText(request.OccurenceWithDate(Name, GeoHashPre, startdate, enddate));
+            }
+        }
     }
+
+
+    /*
+    public void ScientificNameActualization(KeyEvent keyEvent) throws IOException{
+        possibleWords.clear();
+        String lettre = ScientificName.getText();
+        possibleWords = request.AutoCompletion(lettre);
+        TextFields.bindAutoCompletion(ScientificName,possibleWords);
+    }
+
+     */
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
@@ -172,10 +218,21 @@ public class View implements Initializable {
 
         //FIN AFFICHAGE DE LA TERRE
 
+        //Auto completion
+        ScientificName.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+            ObservableList<String> items = FXCollections.observableArrayList(request.AutoCompletion(ScientificName.getText()));
+            combo.setItems(items);
+            }
+        });
 
-        //AUTOCOMPLETION
-        String[] possibleWords = {"Delphinidae"};
-        TextFields.bindAutoCompletion(ScientificName,possibleWords);
+        combo.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                ScientificName.setText(String.valueOf(combo.getSelectionModel().getSelectedItem()));
+            }
+        });
 
     }
 

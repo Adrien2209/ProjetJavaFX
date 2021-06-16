@@ -1,5 +1,6 @@
 package sample;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -40,6 +41,32 @@ public class API {
         }
 
         return new JSONObject(json);
+    }
+
+    public static JSONArray readJsonFromUrlArray(String url){
+        String json = "";
+
+        HttpClient client = HttpClient.newBuilder()
+                .version(Version.HTTP_1_1)
+                .followRedirects(Redirect.NORMAL)
+                .connectTimeout(Duration.ofSeconds(20))
+                .build();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .timeout(Duration.ofMinutes(2))
+                .header("Content-Type","application/json")
+                .GET()
+                .build();
+
+        try {
+            json = client.sendAsync(request, BodyHandlers.ofString())
+                    .thenApply(HttpResponse::body).get(10, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return new JSONArray(json);
     }
 
     private static String readAll(Reader rd) throws IOException {
