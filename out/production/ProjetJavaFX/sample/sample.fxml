@@ -97,12 +97,12 @@
             </HBox>
             <HBox prefHeight="36.0" prefWidth="434.0">
                <children>
-                  <Button fx:id="clearstartdate" mnemonicParsing="false" onAction="#handleButtonClearStartDate" prefHeight="26.0" prefWidth="211.0" text="Clear Start Date">
+                  <Button fx:id="clearstartdate" mnemonicParsing="false" prefHeight="26.0" prefWidth="211.0" text="Clear Start Date">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="clearenddate" mnemonicParsing="false" onAction="#handleButtonClearEndDate" prefHeight="26.0" prefWidth="194.0" text="Clear End Date">
+                  <Button fx:id="clearenddate" mnemonicParsing="false" prefHeight="26.0" prefWidth="194.0" text="Clear End Date">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
@@ -282,7 +282,7 @@
                   <Insets left="10.0" top="10.0" />
                </HBox.margin>
             </Text>
-            <Button fx:id="search" mnemonicParsing="false" onAction="#handleButtonSearch" prefHeight="26.0" prefWidth="187.0" text="Search !">
+            <Button fx:id="search" mnemonicParsing="false" prefHeight="26.0" prefWidth="187.0" text="Search !">
                <HBox.margin>
                   <Insets left="20.0" top="23.0" />
                </HBox.margin>

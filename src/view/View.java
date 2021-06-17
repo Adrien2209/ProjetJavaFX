@@ -2,6 +2,7 @@ package view;
 
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
+import javafx.animation.AnimationTimer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -67,7 +68,11 @@ public class View implements Initializable {
     @FXML
     private DatePicker EndDate;
 
+    @FXML
+    private Button clearstartdate;
 
+    @FXML
+    private Button clearenddate;
 
 
     @FXML
@@ -115,75 +120,63 @@ public class View implements Initializable {
         request = new Request();
     }
 
-    //Create a Pane et graph scene root for the 3D content
-    Group root3D = new Group();
-
-    ArrayList<String> possibleWords = new ArrayList<String>();
-
-
-    public void handleButtonSearch(ActionEvent actionEvent) throws IOException {
-        Group root3DNew = new Group();
-        informations.setText("Informations");
-        String Name = ScientificName.getText();
-        String GeoHashPre = GeoHashPrecision.getText();
-
-        // Request with Scientific Name and GeoHash
-        if(StartDate.getValue() == null && EndDate.getValue() == null){
-            root3DNew.getChildren().clear();
-            AffichageTerre(root3DNew);
-            ArrayList<String> resultat = request.GlobalOccurenceScientificName(Name,GeoHashPre, root3DNew);
-            informations.appendText(resultat.get(0));
-            Legend(resultat.get(1));
-        }
-
-        // Request with Scientific Name, GeoHash and date
-        else if(StartDate.getValue() != null || EndDate.getValue() != null){
-            if(StartDate.getValue() == null){
-                root3DNew.getChildren().clear();
-                AffichageTerre(root3DNew);
-                String startdate = "";
-                String enddate = EndDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                ArrayList<String> resultat = request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate, root3DNew);
-                informations.appendText(resultat.get(0));
-                Legend(resultat.get(1));
-            }
-            else if(EndDate.getValue() == null){
-                root3DNew.getChildren().clear();
-                AffichageTerre(root3DNew);
-                String startdate = StartDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                String enddate = "";
-                ArrayList<String> resultat = request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate, root3DNew);
-                informations.appendText(resultat.get(0));
-                Legend(resultat.get(1));
-            }
-            else {
-                root3DNew.getChildren().clear();
-                AffichageTerre(root3DNew);
-                String startdate = StartDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                String enddate = EndDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                ArrayList<String> resultat = request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate, root3DNew);
-                informations.appendText(resultat.get(0));
-                Legend(resultat.get(1));
-            }
-        }
-    }
-
-    public void handleButtonClearStartDate(ActionEvent actionEvent) throws IOException {
-         StartDate.setValue(null);
-    }
-    public void handleButtonClearEndDate(ActionEvent actionEvent) throws IOException {
-        EndDate.setValue(null);
-    }
-
-
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        //Create a Pane et graph scene root for the 3D content
+        Group root3D = new Group();
+        Group Histogramme = new Group();
+
         //Set disable
         informations.setEditable(false);
 
         //AFFICHAGE DE LA TERRE
-        AffichageTerre(root3D);
+        // Load geometry
+        ObjModelImporter objImporter = new ObjModelImporter();
+        try {
+            URL modelUrl = this.getClass().getResource("../sample/Earth/earth.obj");
+            objImporter.read(modelUrl);
+        } catch (ImportException e) {
+            // handle exception
+            System.out.println(e.getMessage());
+        }
+        MeshView[] meshViews = objImporter.getImport();
+        Group earth = new Group(meshViews);
+
+        // Add a camera group
+        PerspectiveCamera camera = new PerspectiveCamera(true);
+        new CameraManager(camera, pane3D, root3D);
+
+        // Add point light
+        PointLight light = new PointLight(Color.WHITE);
+        light.setTranslateX(-180);
+        light.setTranslateY(-90);
+        light.setTranslateZ(-120);
+        light.getScope().addAll(root3D);
+        root3D.getChildren().add(light);
+
+        // Add ambient light
+        AmbientLight ambientLight = new AmbientLight(Color.WHITE);
+        ambientLight.getScope().addAll(root3D);
+        root3D.getChildren().add(ambientLight);
+
+        // Create the subscene
+        SubScene subscene = new SubScene(root3D, 566, 700, true, SceneAntialiasing.BALANCED);
+        subscene.setCamera(camera);
+        subscene.setFill(Color.gray(0.2));
+        pane3D.getChildren().addAll(subscene);
+
+        //Add an animation timer
+        final long startNanoTime = System.nanoTime();
+        new AnimationTimer() {
+            public void handle(long currentNanoTime) {
+                double t = (currentNanoTime - startNanoTime) / 1000000000.0;
+                double rotationSpeed = 12.0;
+                earth.setRotationAxis(new Point3D(0,1,0));
+                earth.setRotate(rotationSpeed*t);
+
+            }
+        }.start();
 
         //Auto completion
         ScientificName.setOnKeyReleased(new EventHandler<KeyEvent>() {
@@ -194,12 +187,76 @@ public class View implements Initializable {
             }
         });
 
+        //Search Button
+        search.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent){
+                informations.setText("Informations");
+                String Name = ScientificName.getText();
+                String GeoHashPre = GeoHashPrecision.getText();
+
+                // Request with Scientific Name and GeoHash
+                if(StartDate.getValue() == null && EndDate.getValue() == null){
+                    Histogramme.getChildren().clear();
+                    ArrayList<String> resultat = request.GlobalOccurenceScientificName(Name,GeoHashPre, Histogramme);
+                    informations.appendText(resultat.get(0));
+                    Legend(resultat.get(1));
+                }
+
+                // Request with Scientific Name, GeoHash and date
+                else if(StartDate.getValue() != null || EndDate.getValue() != null){
+                    if(StartDate.getValue() == null){
+                        Histogramme.getChildren().clear();
+                        String startdate = "";
+                        String enddate = EndDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        ArrayList<String> resultat = request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate, Histogramme);
+                        informations.appendText(resultat.get(0));
+                        Legend(resultat.get(1));
+                    }
+                    else if(EndDate.getValue() == null){
+                        Histogramme.getChildren().clear();
+                        String startdate = StartDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        String enddate = "";
+                        ArrayList<String> resultat = request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate, Histogramme);
+                        informations.appendText(resultat.get(0));
+                        Legend(resultat.get(1));
+                    }
+                    else {
+                        Histogramme.getChildren().clear();
+                        String startdate = StartDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        String enddate = EndDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        ArrayList<String> resultat = request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate, Histogramme);
+                        informations.appendText(resultat.get(0));
+                        Legend(resultat.get(1));
+                    }
+                }
+            }
+        });
+
+        //Clear Start Date Button
+        clearstartdate.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent actionEvent){
+                StartDate.setValue(null);
+                }
+            });
+
+        //Clear End Date Button
+        clearstartdate.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent actionEvent){
+                EndDate.setValue(null);
+            }
+        });
+
         combo.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 ScientificName.setText(String.valueOf(combo.getSelectionModel().getSelectedItem()));
             }
         });
+        earth.getChildren().add(Histogramme);
+        root3D.getChildren().add(earth);
 
     }
 
@@ -233,45 +290,6 @@ public class View implements Initializable {
                 -java.lang.Math.sin(java.lang.Math.toRadians(lat_cor)),
                 java.lang.Math.cos(java.lang.Math.toRadians(lon_cor))
                         * java.lang.Math.cos(java.lang.Math.toRadians(lat_cor)));
-    }
-
-    public void AffichageTerre(Group parent){
-        // Load geometry
-        ObjModelImporter objImporter = new ObjModelImporter();
-        try {
-            URL modelUrl = this.getClass().getResource("../sample/Earth/earth.obj");
-            objImporter.read(modelUrl);
-        } catch (ImportException e) {
-            // handle exception
-            System.out.println(e.getMessage());
-        }
-        MeshView[] meshViews = objImporter.getImport();
-        Group earth = new Group(meshViews);
-        parent.getChildren().add(earth);
-
-        // Add a camera group
-        PerspectiveCamera camera = new PerspectiveCamera(true);
-        new CameraManager(camera, pane3D, parent);
-
-        // Add point light
-        PointLight light = new PointLight(Color.WHITE);
-        light.setTranslateX(-180);
-        light.setTranslateY(-90);
-        light.setTranslateZ(-120);
-        light.getScope().addAll(parent);
-        parent.getChildren().add(light);
-
-        // Add ambient light
-        AmbientLight ambientLight = new AmbientLight(Color.WHITE);
-        ambientLight.getScope().addAll(parent);
-        parent.getChildren().add(ambientLight);
-
-        // Create the subscene
-        SubScene subscene = new SubScene(parent, 566, 700, true, SceneAntialiasing.BALANCED);
-        subscene.setCamera(camera);
-        subscene.setFill(Color.gray(0.2));
-        pane3D.getChildren().addAll(subscene);
-
     }
 
     public void Legend(String maximum){

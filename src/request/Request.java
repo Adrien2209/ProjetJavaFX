@@ -1,5 +1,6 @@
 package request;
 
+import javafx.animation.AnimationTimer;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
@@ -23,6 +24,7 @@ public class Request {
     public ArrayList<String> GlobalOccurenceScientificName(String scientificname, String geohash, Group parent)
     {
         ArrayList<String> ListRetour = new ArrayList<String>();
+        ArrayList<Box> Histogramme = new ArrayList<Box>();
         scientificname = scientificname.replaceAll(" ", "%20");
         int total = 0;
         String retour = "";
@@ -108,6 +110,7 @@ public class Request {
     public ArrayList<String> OccurenceWithDate(String scientificname, String geohash, String startdate, String enddate, Group parent) {
 
         ArrayList<String> ListRetour = new ArrayList<String>();
+        ArrayList<Box> Histogramme = new ArrayList<Box>();
         scientificname = scientificname.replaceAll(" ", "%20");
         int total = 0;
         String retour = "";
@@ -293,7 +296,7 @@ public class Request {
 
         Point3D from = geoCoordTo3dCoord(latitude, longitude);
         Box box = new Box(0.005,0.005,taille);
-        parent.setId(name);
+        box.setId(name);
         Point3D to = Point3D.ZERO;
         Point3D yDir = new Point3D(0, 1, 0);
 
@@ -308,8 +311,17 @@ public class Request {
         affine.append(lookAt(from,to,yDir));
         groupbox.getTransforms().setAll(affine);
         groupbox.getChildren().addAll(box);
+        if(groupbox.getChildren().contains(box)){
+            System.out.println("Il contient bien");
+        }
 
         parent.getChildren().addAll(groupbox);
+        //Add an animation timer
+    }
+
+    public void displayHistogramme(Group parent, ArrayList<Box> Occurence){
+        Group groupbox = new Group();
+
     }
 
     public static Affine lookAt(Point3D from, Point3D to, Point3D ydir) {
@@ -320,5 +332,5 @@ public class Request {
                 xVec.getY(), yVec.getY(), zVec.getY(), from.getY(),
                 xVec.getZ(), yVec.getZ(), zVec.getZ(), from.getZ());
     }
-    
+
 }
