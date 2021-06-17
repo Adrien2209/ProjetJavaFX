@@ -2,6 +2,7 @@ package view;
 
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
+import javafx.animation.AnimationTimer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -26,6 +27,8 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import request.Request;
 import sample.CameraManager;
 import org.controlsfx.control.textfield.TextFields;
@@ -37,6 +40,8 @@ import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+
+import static sample.API.readJsonFromUrl;
 
 public class View implements Initializable {
 
@@ -64,16 +69,11 @@ public class View implements Initializable {
     private DatePicker EndDate;
 
     @FXML
-    private TextField TimeSpan;
+    private Button clearstartdate;
 
     @FXML
-    private TextField NumberOfIntervals;
+    private Button clearenddate;
 
-    @FXML
-    private TextField GPSCoordinates;
-
-    @FXML
-    private TextField GeoHash;
 
     @FXML
     private RadioButton Move;
@@ -120,62 +120,17 @@ public class View implements Initializable {
         request = new Request();
     }
 
-    ArrayList<String> possibleWords = new ArrayList<String>();
-
-
-    public void handleButtonSearch(ActionEvent actionEvent) throws IOException {
-        informations.setText("Informations");
-        String Name = ScientificName.getText();
-        String GeoHashPre = GeoHashPrecision.getText();
-
-        // Request with Scientific Name and GeoHash
-        if(StartDate.getValue() == null && EndDate.getValue() == null && TimeSpan.getText().equals("") && NumberOfIntervals.getText().equals("")){
-            request.GlobalOccurenceScientificName(Name,GeoHashPre);
-            informations.appendText(request.GlobalOccurenceScientificName(Name,GeoHashPre));
-        }
-
-        // Request with Scientific Name, GeoHash and date
-        else if(StartDate.getValue() != null || EndDate.getValue() != null){
-            if(StartDate.getValue() == null){
-                String startdate = "";
-                String enddate = EndDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                informations.appendText(request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate));
-            }
-            else if(EndDate.getValue() == null){
-                String startdate = StartDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                String enddate = "";
-                informations.appendText(request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate));
-            }
-            else {
-                String startdate = StartDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                String enddate = EndDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                //request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate);
-                informations.appendText(request.OccurenceWithDate(Name, GeoHashPre, startdate, enddate));
-            }
-        }
-    }
-
-
-    /*
-    public void ScientificNameActualization(KeyEvent keyEvent) throws IOException{
-        possibleWords.clear();
-        String lettre = ScientificName.getText();
-        possibleWords = request.AutoCompletion(lettre);
-        TextFields.bindAutoCompletion(ScientificName,possibleWords);
-    }
-
-     */
-
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-        //Set disable
-        informations.setEditable(false);
-        //AFFICHAGE DE LA TERRE
-
         //Create a Pane et graph scene root for the 3D content
         Group root3D = new Group();
+        Group Histogramme = new Group();
 
+        //Set disable
+        informations.setEditable(false);
+
+        //AFFICHAGE DE LA TERRE
         // Load geometry
         ObjModelImporter objImporter = new ObjModelImporter();
         try {
@@ -187,7 +142,6 @@ public class View implements Initializable {
         }
         MeshView[] meshViews = objImporter.getImport();
         Group earth = new Group(meshViews);
-        root3D.getChildren().add(earth);
 
         // Add a camera group
         PerspectiveCamera camera = new PerspectiveCamera(true);
@@ -212,11 +166,17 @@ public class View implements Initializable {
         subscene.setFill(Color.gray(0.2));
         pane3D.getChildren().addAll(subscene);
 
-        //Affichage des villes
-        displayTown2(root3D,"Brest", 48.447911f,-4.418539f);
-        displayTown(root3D,"Paris", 48.86667f,2.33333f);
+        //Add an animation timer
+        final long startNanoTime = System.nanoTime();
+        new AnimationTimer() {
+            public void handle(long currentNanoTime) {
+                double t = (currentNanoTime - startNanoTime) / 1000000000.0;
+                double rotationSpeed = 12.0;
+                earth.setRotationAxis(new Point3D(0,1,0));
+                earth.setRotate(rotationSpeed*t);
 
-        //FIN AFFICHAGE DE LA TERRE
+            }
+        }.start();
 
         //Auto completion
         ScientificName.setOnKeyReleased(new EventHandler<KeyEvent>() {
@@ -227,12 +187,76 @@ public class View implements Initializable {
             }
         });
 
+        //Search Button
+        search.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent){
+                informations.setText("Informations");
+                String Name = ScientificName.getText();
+                String GeoHashPre = GeoHashPrecision.getText();
+
+                // Request with Scientific Name and GeoHash
+                if(StartDate.getValue() == null && EndDate.getValue() == null){
+                    Histogramme.getChildren().clear();
+                    ArrayList<String> resultat = request.GlobalOccurenceScientificName(Name,GeoHashPre, Histogramme);
+                    informations.appendText(resultat.get(0));
+                    Legend(resultat.get(1));
+                }
+
+                // Request with Scientific Name, GeoHash and date
+                else if(StartDate.getValue() != null || EndDate.getValue() != null){
+                    if(StartDate.getValue() == null){
+                        Histogramme.getChildren().clear();
+                        String startdate = "";
+                        String enddate = EndDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        ArrayList<String> resultat = request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate, Histogramme);
+                        informations.appendText(resultat.get(0));
+                        Legend(resultat.get(1));
+                    }
+                    else if(EndDate.getValue() == null){
+                        Histogramme.getChildren().clear();
+                        String startdate = StartDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        String enddate = "";
+                        ArrayList<String> resultat = request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate, Histogramme);
+                        informations.appendText(resultat.get(0));
+                        Legend(resultat.get(1));
+                    }
+                    else {
+                        Histogramme.getChildren().clear();
+                        String startdate = StartDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        String enddate = EndDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        ArrayList<String> resultat = request.OccurenceWithDate(Name,GeoHashPre,startdate,enddate, Histogramme);
+                        informations.appendText(resultat.get(0));
+                        Legend(resultat.get(1));
+                    }
+                }
+            }
+        });
+
+        //Clear Start Date Button
+        clearstartdate.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent actionEvent){
+                StartDate.setValue(null);
+                }
+            });
+
+        //Clear End Date Button
+        clearstartdate.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent actionEvent){
+                EndDate.setValue(null);
+            }
+        });
+
         combo.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 ScientificName.setText(String.valueOf(combo.getSelectionModel().getSelectedItem()));
             }
         });
+        earth.getChildren().add(Histogramme);
+        root3D.getChildren().add(earth);
 
     }
 
@@ -257,9 +281,9 @@ public class View implements Initializable {
     }
 
 
-    public static Point3D geoCoordTo3dCoord(float lat, float lon) {
-        float lat_cor = lat + TEXTURE_LAT_OFFSET;
-        float lon_cor = lon + TEXTURE_LON_OFFSET;
+    public static Point3D geoCoordTo3dCoord(double lat, double lon) {
+        double lat_cor = lat + TEXTURE_LAT_OFFSET;
+        double lon_cor = lon + TEXTURE_LON_OFFSET;
         return new Point3D(
                 -java.lang.Math.sin(java.lang.Math.toRadians(lon_cor))
                         * java.lang.Math.cos(java.lang.Math.toRadians(lat_cor)),
@@ -268,48 +292,13 @@ public class View implements Initializable {
                         * java.lang.Math.cos(java.lang.Math.toRadians(lat_cor)));
     }
 
-    public void displayTown(Group parent, String name, float latitude, float longitude)
-    {
-        Point3D emplacement = geoCoordTo3dCoord(latitude, longitude);
-        Box town = new Box(0.005,0.01,0.005);
-        parent.setId(name);
-
-        // Town Color
-        final PhongMaterial greenMaterial = new PhongMaterial();
-        greenMaterial.setDiffuseColor(Color.GREEN);
-        greenMaterial.setSpecularColor(Color.GREEN);
-        town.setMaterial(greenMaterial);
-
-        //Town placement
-
-        town.setTranslateX(emplacement.getX());
-        town.setTranslateY(emplacement.getY());
-        town.setTranslateZ(emplacement.getZ());
-
-        parent.getChildren().add(town);
-
+    public void Legend(String maximum){
+        int PasLegende = (Integer.parseInt(maximum)/12);
+        legend1.setText("> "+String.valueOf(10*PasLegende));
+        legend2.setText("> "+String.valueOf(8*PasLegende));
+        legend3.setText("> "+String.valueOf(5*PasLegende));
+        legend4.setText("> "+String.valueOf(2*PasLegende));
+        legend5.setText("> "+String.valueOf(1*PasLegende));
+        legend6.setText("> "+String.valueOf(0));
     }
-
-    public void displayTown2(Group parent, String name, float latitude, float longitude)
-    {
-        Point3D emplacement = geoCoordTo3dCoord(latitude, longitude);
-        Box town = new Box(0.005,0.05,0.005);
-        parent.setId(name);
-
-        // Town Color
-        final PhongMaterial redMaterial = new PhongMaterial();
-        redMaterial.setDiffuseColor(Color.RED);
-        redMaterial.setSpecularColor(Color.RED);
-        town.setMaterial(redMaterial);
-
-        //Town placement
-
-        town.setTranslateX(emplacement.getX());
-        town.setTranslateY(emplacement.getY());
-        town.setTranslateZ(emplacement.getZ());
-
-        parent.getChildren().add(town);
-
-    }
-
 }

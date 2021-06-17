@@ -22,7 +22,7 @@
       <Pane fx:id="pane3D" prefHeight="700.0" prefWidth="566.0" />
       <VBox layoutX="564.0" layoutY="67.0" prefHeight="633.0" prefWidth="434.0" style="-fx-background-color: gainsboro; -fx-border-color: black gainsboro gainsboro gainsboro;">
          <children>
-            <HBox prefHeight="145.0" prefWidth="434.0" style="-fx-border-color: black gainsboro black gainsboro;">
+            <HBox prefHeight="115.0" prefWidth="434.0" style="-fx-border-color: black gainsboro black gainsboro;">
                <children>
                   <VBox prefHeight="82.0" prefWidth="267.0">
                      <children>
@@ -61,105 +61,55 @@
                   </VBox>
                </children>
             </HBox>
-            <HBox prefHeight="40.0" prefWidth="436.0">
+            <HBox prefHeight="24.0" prefWidth="434.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Start date" textAlignment="CENTER" wrappingWidth="119.68225085735321">
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Start date" textAlignment="CENTER" wrappingWidth="206.082221865654">
                      <font>
                         <Font size="15.0" />
                      </font>
                      <HBox.margin>
-                        <Insets left="10.0" top="20.0" />
+                        <Insets left="10.0" top="10.0" />
                      </HBox.margin>
                   </Text>
-                  <Text stroke="TRANSPARENT" strokeType="OUTSIDE" strokeWidth="0.0" text="End date" textAlignment="CENTER" wrappingWidth="119.2104355096817">
+                  <Text stroke="TRANSPARENT" strokeType="OUTSIDE" strokeWidth="0.0" text="End date" textAlignment="CENTER" wrappingWidth="202.4103866815567">
                      <HBox.margin>
-                        <Insets left="10.0" top="20.0" />
+                        <Insets left="10.0" top="10.0" />
                      </HBox.margin>
                      <font>
                         <Font size="15.0" />
                      </font>
-                  </Text>
-                  <Text stroke="TRANSPARENT" strokeType="OUTSIDE" strokeWidth="0.0" text="Time span" textAlignment="CENTER" wrappingWidth="68.010498046875">
-                     <font>
-                        <Font size="15.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets left="10.0" top="20.0" />
-                     </HBox.margin>
-                  </Text>
-                  <Text stroke="TRANSPARENT" strokeType="OUTSIDE" strokeWidth="0.0" text="Number of intervals" textAlignment="CENTER" wrappingWidth="83.21056365966797">
-                     <font>
-                        <Font size="15.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets left="10.0" />
-                     </HBox.margin>
                   </Text>
                </children>
             </HBox>
-            <HBox prefHeight="46.0" prefWidth="334.0">
+            <HBox prefHeight="35.0" prefWidth="434.0">
                <children>
-                  <DatePicker fx:id="StartDate" prefHeight="26.0" prefWidth="118.0">
+                  <DatePicker fx:id="StartDate" prefHeight="26.0" prefWidth="211.0">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </DatePicker>
-                  <DatePicker fx:id="EndDate" prefHeight="26.0" prefWidth="115.0">
+                  <DatePicker fx:id="EndDate" prefHeight="26.0" prefWidth="196.0">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </DatePicker>
-                  <TextField fx:id="TimeSpan" prefHeight="26.0" prefWidth="74.0">
-                     <HBox.margin>
-                        <Insets left="10.0" />
-                     </HBox.margin>
-                  </TextField>
-                  <TextField fx:id="NumberOfIntervals" prefHeight="26.0" prefWidth="84.0">
-                     <HBox.margin>
-                        <Insets left="10.0" />
-                     </HBox.margin>
-                  </TextField>
                </children>
             </HBox>
-            <HBox prefHeight="94.0" prefWidth="434.0" style="-fx-border-color: black gainsboro black gainsboro;">
+            <HBox prefHeight="36.0" prefWidth="434.0">
                <children>
-                  <VBox prefHeight="200.0" prefWidth="217.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GPS Coordinates" textAlignment="CENTER" wrappingWidth="194.87085151672363">
-                           <font>
-                              <Font size="15.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
-                        </Text>
-                        <TextField fx:id="GPSCoordinates">
-                           <VBox.margin>
-                              <Insets left="10.0" right="10.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="200.0" prefWidth="217.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GeoHash" textAlignment="CENTER" wrappingWidth="194.87086486816406">
-                           <font>
-                              <Font size="15.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
-                        </Text>
-                        <TextField fx:id="GeoHash">
-                           <VBox.margin>
-                              <Insets left="10.0" right="10.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
+                  <Button fx:id="clearstartdate" mnemonicParsing="false" prefHeight="26.0" prefWidth="211.0" text="Clear Start Date">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="clearenddate" mnemonicParsing="false" prefHeight="26.0" prefWidth="194.0" text="Clear End Date">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Button>
                </children>
             </HBox>
-            <HBox prefHeight="45.0" prefWidth="334.0" style="-fx-border-color: black gainsboro black gainsboro;">
+            <HBox prefHeight="38.0" prefWidth="434.0" style="-fx-border-color: black gainsboro black gainsboro;">
                <children>
                   <RadioButton fx:id="Move" mnemonicParsing="false" prefHeight="30.0" prefWidth="98.0" text="Move">
                      <HBox.margin>
@@ -190,7 +140,7 @@
                   <Insets top="5.0" />
                </VBox.margin>
             </Text>
-            <ListView fx:id="SpecieList" prefHeight="108.0" prefWidth="434.0">
+            <ListView fx:id="SpecieList" prefHeight="176.0" prefWidth="434.0">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
@@ -332,7 +282,7 @@
                   <Insets left="10.0" top="10.0" />
                </HBox.margin>
             </Text>
-            <Button fx:id="search" mnemonicParsing="false" onAction="#handleButtonSearch" prefHeight="26.0" prefWidth="187.0" text="Search !">
+            <Button fx:id="search" mnemonicParsing="false" prefHeight="26.0" prefWidth="187.0" text="Search !">
                <HBox.margin>
                   <Insets left="20.0" top="23.0" />
                </HBox.margin>
