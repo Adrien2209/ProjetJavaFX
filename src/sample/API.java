@@ -69,7 +69,7 @@ public class API {
         return new JSONArray(json);
     }
 
-    private static String readAll(Reader rd) throws IOException {
+    public static String readAll(Reader rd) throws IOException {
 
         StringBuilder sb = new StringBuilder();
         int cp;
