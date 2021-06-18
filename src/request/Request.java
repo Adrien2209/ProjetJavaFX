@@ -544,6 +544,9 @@ public class Request {
 
     public String getSpecieInformations(String scientificname, String geohash){
         JSONObject jsonRoot = readJsonFromUrl("https://api.obis.org/v3/occurrence?scientificname=" + scientificname+ "&geometry="+ geohash +"&fields=scientificName%2Corder%2Csuperclass%2CrecordedBy%2Cspecies&size=150");
+        if(scientificname.equals("")){
+            jsonRoot = readJsonFromUrl("https://api.obis.org/v3/occurrence?geometry="+ geohash +"&fields=scientificName%2Corder%2Csuperclass%2CrecordedBy%2Cspecies&size=150");
+        }
         int nbbug = 0;
         JSONArray liste = jsonRoot.getJSONArray("results");
         String Retour = "";

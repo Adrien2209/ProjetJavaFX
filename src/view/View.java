@@ -79,15 +79,6 @@ public class View implements Initializable {
     private Button startanimation;
 
     @FXML
-    private RadioButton Move;
-
-    @FXML
-    private ToggleGroup MoveSelection;
-
-    @FXML
-    private RadioButton Selection;
-
-    @FXML
     private ListView<String> SpecieList;
 
     @FXML
@@ -174,8 +165,10 @@ public class View implements Initializable {
 
         subscene.addEventHandler(MouseEvent.ANY, event ->{
             if(event.getEventType() == MouseEvent.MOUSE_PRESSED && event.isAltDown()){
+                informations.setText("Informations");
                 ArrayList<String> ListSpecie = new ArrayList<String>();
                 Zone.getChildren().clear();
+                Histogramme.getChildren().clear();
                 PickResult pickResult = event.getPickResult();
                 Point3D spaceCoord = pickResult.getIntersectedPoint();
                 Point2D coord2D = SpaceCoordToGeoCoord(spaceCoord);
@@ -186,6 +179,8 @@ public class View implements Initializable {
                 for(String specie : ListSpecie){
                     SpecieList.getItems().add(specie);
                 }
+                String specieinformations = request.getSpecieInformations("", geohash);
+                informations.appendText(specieinformations);
             }
         });
 
@@ -307,7 +302,7 @@ public class View implements Initializable {
             });
 
         //Clear End Date Button
-        clearstartdate.setOnAction(new EventHandler<ActionEvent>(){
+        clearenddate.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent actionEvent){
                 EndDate.setValue(null);

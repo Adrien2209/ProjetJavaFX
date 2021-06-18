@@ -5,10 +5,8 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -114,29 +112,6 @@
                   </Button>
                </children>
             </HBox>
-            <HBox prefHeight="38.0" prefWidth="434.0" style="-fx-border-color: black gainsboro black gainsboro;">
-               <children>
-                  <RadioButton fx:id="Move" mnemonicParsing="false" prefHeight="30.0" prefWidth="98.0" text="Move">
-                     <HBox.margin>
-                        <Insets left="10.0" top="5.0" />
-                     </HBox.margin>
-                     <font>
-                        <Font size="20.0" />
-                     </font>
-                     <toggleGroup>
-                        <ToggleGroup fx:id="MoveSelection" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton fx:id="Selection" mnemonicParsing="false" prefHeight="30.0" prefWidth="157.0" text="Selection" toggleGroup="$MoveSelection">
-                     <HBox.margin>
-                        <Insets left="80.0" top="5.0" />
-                     </HBox.margin>
-                     <font>
-                        <Font size="20.0" />
-                     </font>
-                  </RadioButton>
-               </children>
-            </HBox>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Specie list" textAlignment="CENTER" wrappingWidth="434.0">
                <font>
                   <Font size="18.0" />
@@ -145,7 +120,7 @@
                   <Insets top="5.0" />
                </VBox.margin>
             </Text>
-            <ListView fx:id="SpecieList" prefHeight="176.0" prefWidth="434.0">
+            <ListView fx:id="SpecieList" prefHeight="202.0" prefWidth="434.0">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
