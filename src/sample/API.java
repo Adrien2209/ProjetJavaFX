@@ -17,6 +17,11 @@ import java.util.concurrent.TimeUnit;
 
 public class API {
 
+    /**
+     * Methode qui retourne un JSONObject a partir d'un JSON obtenu à travers un URL
+     * @param url : lien internet (API)
+     * @return JSONObject
+     */
     public static JSONObject readJsonFromUrl(String url){
         String json = "";
 
@@ -43,6 +48,11 @@ public class API {
         return new JSONObject(json);
     }
 
+    /**
+     * Methode qui retourne un JSONArray a partir d'un JSON obtenu à travers un URL
+     * @param url : lien internet (API)
+     * @return JSONArray
+     */
     public static JSONArray readJsonFromUrlArray(String url){
         String json = "";
 
@@ -69,6 +79,12 @@ public class API {
         return new JSONArray(json);
     }
 
+    /**
+     * Methode qui permet de lire un fichier JSON local
+     * @param rd
+     * @return JSON sous format String
+     * @throws IOException
+     */
     public static String readAll(Reader rd) throws IOException {
 
         StringBuilder sb = new StringBuilder();

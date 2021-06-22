@@ -2,19 +2,16 @@ package view;
 
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
-import javafx.animation.AnimationTimer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
@@ -26,22 +23,13 @@ import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import request.Request;
 import sample.CameraManager;
-import org.controlsfx.control.textfield.TextFields;
-import org.controlsfx.control.textfield.AutoCompletionBinding;
-
-import java.io.IOException;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import static sample.API.readJsonFromUrl;
 
 public class View implements Initializable {
 
@@ -169,17 +157,24 @@ public class View implements Initializable {
                 ArrayList<String> ListSpecie = new ArrayList<String>();
                 Zone.getChildren().clear();
                 Histogramme.getChildren().clear();
+
+                //Gestion des coordonnes de la souris pour afficher la zone
                 PickResult pickResult = event.getPickResult();
                 Point3D spaceCoord = pickResult.getIntersectedPoint();
                 Point2D coord2D = SpaceCoordToGeoCoord(spaceCoord);
                 DrawSphere(Zone, coord2D.getX(), coord2D.getY());
                 Location loc = new Location("selectedGeoHash", coord2D.getX(), coord2D.getY());
                 geohash = GeoHashHelper.getGeohash(loc);
+                informations.appendText("\n\nGeoHash : " + geohash);
                 ListSpecie = request.getSpecie(geohash);
+
+                //Ajout au panneau Specie List, toutes les especes recupere
                 for(String specie : ListSpecie){
                     SpecieList.getItems().add(specie);
                 }
                 String specieinformations = request.getSpecieInformations("", geohash);
+
+                //Ajout des informations sur les espece dans le panneau Information
                 informations.appendText(specieinformations);
             }
         });
@@ -202,6 +197,7 @@ public class View implements Initializable {
             }
         }.start();
         */
+
         //Auto completion
         ScientificName.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
@@ -321,27 +317,6 @@ public class View implements Initializable {
 
     }
 
-    // From Rahel Lüthy : https://netzwerg.ch/blog/2015/03/22/javafx-3d-line/
-    public Cylinder createLine(Point3D origin, Point3D target) {
-        Point3D yAxis = new Point3D(0, 1, 0);
-        Point3D diff = target.subtract(origin);
-        double height = diff.magnitude();
-
-        Point3D mid = target.midpoint(origin);
-        Translate moveToMidpoint = new Translate(mid.getX(), mid.getY(), mid.getZ());
-
-        Point3D axisOfRotation = diff.crossProduct(yAxis);
-        double angle = Math.acos(diff.normalize().dotProduct(yAxis));
-        Rotate rotateAroundCenter = new Rotate(-Math.toDegrees(angle), axisOfRotation);
-
-        Cylinder line = new Cylinder(0.01f, height);
-
-        line.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
-
-        return line;
-    }
-
-
     public static Point3D geoCoordTo3dCoord(double lat, double lon) {
         double lat_cor = lat + TEXTURE_LAT_OFFSET;
         double lon_cor = lon + TEXTURE_LON_OFFSET;
@@ -367,36 +342,6 @@ public class View implements Initializable {
         return new Point2D(lat, lon);
     }
 
-    private void AddQuadrilateral(Group parent, Point3D topRight, Point3D bottomRight, Point3D bottomLeft, Point3D topLeft, PhongMaterial material){
-
-        final TriangleMesh triangleMesh= new TriangleMesh();
-
-        final float[] points = {
-                (float)topRight.getX(), (float)topRight.getY(), (float)topRight.getZ(),
-                (float)topLeft.getX(), (float)topLeft.getY(), (float)topLeft.getZ(),
-                (float)bottomLeft.getX(), (float)bottomLeft.getY(), (float)bottomLeft.getZ(),
-                (float)bottomRight.getX(), (float)bottomRight.getY(), (float)bottomRight.getZ()
-            };
-        final float[] texCoords = {
-                1,1,
-                1,0,
-                0,1,
-                0,0
-            };
-
-        final int[] faces = {
-                0, 1, 1, 0, 2, 2,
-                0, 1, 2, 2, 3, 3
-            };
-
-        triangleMesh.getPoints().setAll(points);
-        triangleMesh.getTexCoords().setAll(texCoords);
-        triangleMesh.getFaces().setAll(faces);
-
-        final MeshView meshView= new MeshView(triangleMesh);
-        meshView.setMaterial(material);
-        parent.getChildren().addAll(meshView);
-    }
 
     public void DrawSphere(Group parent, double latitude, double longitude){
         Point3D emplacement = geoCoordTo3dCoord(latitude, longitude);

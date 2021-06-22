@@ -11,5 +11,6 @@
     <orderEntry type="library" name="jimObjModelImporterJFX" level="project" />
     <orderEntry type="library" name="json-20210307" level="project" />
     <orderEntry type="library" name="controlsfx-9.0.0" level="project" />
+    <orderEntry type="library" name="org.junit.jupiter:junit-jupiter:5.4.2" level="project" />
   </component>
 </module>
